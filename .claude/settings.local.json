@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"c:/Users/sun34/Downloads/first hope ngo/mobile\" && rm -f \"app/\\(tabs\\)/two.tsx\" \"app/modal.tsx\" && echo \"removed\" && find app -type f)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\sun34\\Downloads\\first hope ngo\\mobile\\app\\(tabs)"
+    ]
+  }
+}
