@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { insert } from "@/lib/db";
 
-/** Accepts a volunteer registration and stores it in Supabase (if configured). */
+/** Accepts a volunteer registration. Uses Supabase if configured, else the local DB. */
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -10,22 +11,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
     }
 
+    const record = {
+      name: body.name,
+      phone: body.phone ?? null,
+      email: body.email,
+      state: body.state ?? null,
+      city: body.city ?? null,
+      skills: body.skills ?? [],
+      availability: body.availability ?? null,
+      motivation: body.motivation ?? null,
+      resume_url: body.resume ?? null,
+    };
+
     const supabase = getSupabaseAdmin();
     if (supabase) {
-      const { error } = await supabase.from("volunteers").insert({
-        name: body.name,
-        phone: body.phone,
-        email: body.email,
-        state: body.state,
-        city: body.city,
-        skills: body.skills,
-        availability: body.availability,
-        motivation: body.motivation,
-        resume_url: body.resume ?? null,
-      });
+      const { error } = await supabase.from("volunteers").insert(record);
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     } else {
-      console.info("[volunteer] (no DB configured):", body.name, body.email);
+      await insert("volunteers", record);
     }
 
     // TODO: trigger welcome email + WhatsApp notification here.

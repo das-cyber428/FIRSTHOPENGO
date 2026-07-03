@@ -38,7 +38,13 @@ export function Footer() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (email) setSubscribed(true);
+              if (!email) return;
+              fetch("/api/newsletter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+              }).catch(() => {});
+              setSubscribed(true);
             }}
             className="flex w-full items-center gap-2 rounded-full bg-white/10 p-1.5 ring-1 ring-white/15"
           >
